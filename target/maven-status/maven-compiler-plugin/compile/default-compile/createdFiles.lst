@@ -1,0 +1,3 @@
+com/acme/app/main/RestApplication.class
+com/acme/app/main/RestResource.class
+com/acme/app/main/SimpleServlet.class
