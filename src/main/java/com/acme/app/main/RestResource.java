@@ -2,7 +2,6 @@ package com.acme.app.main;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -14,13 +13,13 @@ import java.util.Map;
 
 @Path("/rest")
 public class RestResource {
-    Map<String, String> json = new HashMap<>();
+    static Map<String, String> json = new HashMap<>();
 
 
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getResources() {
+    public Response getClients() {
         json.put("framework", "KumuluzEE");
         json.put("Teste", "API");
         json.put("Tendencia", "Hello");
@@ -31,19 +30,21 @@ public class RestResource {
     }
 
     @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    @Path("/rest/{key}")
-    public String getValorByKey(@PathParam("key") String key){
-        String resultado = json.get("Teste");
+    @Produces({MediaType.TEXT_PLAIN})
+    @Path("{key}")
+    public Response getClientByKey(@PathParam("key") String key){
+        String resultado = json.get(key);
         System.out.println(resultado);
-        return resultado;
+        return Response.ok(resultado).build();
     }
 
-//    @DELETE
-//    @Path("/rest/delete/{key}")
-//    public boolean deleteOrderById(@PathParam("id") int id) {
-//        return Response.Instance.deleteDataById(id);
-//    }
+    @DELETE
+    @Path("/delete/{key}")
+    @Produces({MediaType.TEXT_PLAIN})
+    public Response deleteClientByKey(@PathParam("key") String key) {
+        String deleted = json.remove(key);
+        return Response.ok(deleted).build();
+    }
 
 
 }
