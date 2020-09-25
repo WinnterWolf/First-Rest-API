@@ -9,7 +9,7 @@ public class Auxiliar {
         if(count == 0)
             count = 1;
         else{
-            count = count+1;
+            count++;
         }
         return count;
     }
