@@ -1,4 +1,4 @@
-package com.acme.app.main;
+package com.acme.app.main.rest;
 
 /*import javax.faces.application.Application;
 import javax.ws.rs.ApplicationPath;*/
