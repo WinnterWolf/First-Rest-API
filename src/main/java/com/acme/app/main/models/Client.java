@@ -1,9 +1,27 @@
 package com.acme.app.main.models;
 
+import javax.persistence.*;
+
+@Entity
 public class Client {
-    private Long id;
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false)
     private int idade;
+
+    public Client(String nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    public Client() { }
+
+
 
     public int getIdade() {
         return idade;
@@ -21,11 +39,11 @@ public class Client {
         this.nome = nome;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

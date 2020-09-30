@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+
+
+    <!-- Unidade de persistencia da parte 2 do curso (Com implementacao Hibernate ou EclipseLink) -->
+    <persistence-unit name="Teste">
+
+        <!-- Implementacao do JPA -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <!--  <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> -->
+
+        <!-- Classes (entidades) que serao mapeadas -->
+        <class>classes.Client</class>
+
+        <!-- Configuracoes de conexao ao banco de dados e do Hibernate/EclipseLink -->
+        <properties>
+            <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/teste" />
+            <property name="hibernate.connection.username" value="root" />
+            <property name="hibernate.connection.password" value="password" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="update" /> <!-- Possible values for hibernate.hbm2ddl.auto are: validate, update, create, create-drop -->
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
+

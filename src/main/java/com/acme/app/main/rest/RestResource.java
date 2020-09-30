@@ -1,18 +1,26 @@
 package com.acme.app.main.rest;
 
 import com.acme.app.main.models.Client;
-import com.acme.app.main.resources.Auxiliar;
+//import com.acme.app.main.resources.Auxiliar;
 
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 @Path("/rest")
 public class RestResource {
+
+    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Teste");
+    EntityManager entityManager = entityManagerFactory.createEntityManager();
+
     static Map<Integer, Object> lista = new HashMap<>();
 
     //Adiciona um novo Cliente através de Json
@@ -20,7 +28,10 @@ public class RestResource {
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
     public void addClient(Client client){
-        lista.put(Auxiliar.autoIncrementKey(), client);
+        entityManager.getTransaction().begin();
+        entityManager.persist(client);
+        lista.put(client.getId(), client);
+        entityManager.getTransaction().commit();
     }
 
 
@@ -28,60 +39,80 @@ public class RestResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response allClients() {
-
-        Map<Integer, Object> clientes = lista;
-        return Response.ok(clientes).build();
+        String jpqlList = "select a from Client a";
+        List<Client> clienteJPQLList = entityManager
+                .createQuery(jpqlList, Client.class)
+                .getResultList();
+       // Map<Integer, Object> clientes = lista; Método antigo
+        return Response.ok(clienteJPQLList).build();
     }
 
     //Cria 3 Clientes para exemplo
-    @GET
+    @POST
     @Path("exemplo")
-    @Produces({MediaType.APPLICATION_JSON})
     public void createExampleClients() {
-        long[] ids = {1, 2, 3};
         String[] nomes = {"João", "Maria", "Jorge"};
         int[] idades = {32, 23, 54};
-        for(int i = 0;i<ids.length;i++){
-            Client client = new Client();
-            client.setId(ids[i]);
-            client.setIdade(idades[i]);
-            client.setNome(nomes[i]);
-            lista.put(Auxiliar.autoIncrementKey(), client);
+        for(int i = 0;i<nomes.length;i++){
+            entityManager.getTransaction().begin();
+            Client client = new Client(nomes[i], idades[i]);
+            entityManager.persist(client);
+            lista.put(client.getId(), client);
+            entityManager.getTransaction().commit();
         }
     }
 
     //Busca e Retorna um cliente através da Key fornecida na URI
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("{key}")
-    public Response getClientByKey(@PathParam("key") int key){
-        var resultado = lista.get(key);
+    @Path("{id}")
+    public Response getClientByKey(@PathParam("id") int id){
+        String jpql = "select a from Client a where a.id = :id";
+        Client alunoJPQL = entityManager
+                .createQuery(jpql, Client.class)
+                .setParameter("id", id)
+                .getSingleResult();
 
-        return Response.ok(resultado).build();
+        //var resultado = alunoJPQL;
+
+        return Response.ok(alunoJPQL).build();
     }
 
     //Altera um cliente existente através da key fornecida na URI
     @PUT
-    @Path("change/{key}")
+    @Path("change/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public void addClient(@PathParam("key") int key, Client client){
-        lista.replace(key, client);
+    public void addClient(@PathParam("id") int id, Client client){
+        Client clientEntityManager = entityManager.find(Client.class, id);
+        entityManager.getTransaction().begin();
+        clientEntityManager.setNome(client.getNome());
+        clientEntityManager.setIdade(client.getIdade());
+        entityManager.getTransaction().commit();
+        //lista.replace(key, client);
     }
 
-    //Deleta um cliente pela key fornecida na URI e retorna o Cliente deletado
+    //Deleta um cliente pela id fornecida na URI e retorna o Cliente deletado
     @DELETE
-    @Path("/delete/{key}")
+    @Path("/delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response deleteClientByKey(@PathParam("key") int key) {
-        var deleted = lista.remove(key);
-        return Response.ok(deleted).build();
+    public Response deleteClientByKey(@PathParam("id") int id) {
+        Client clientToRemove = entityManager.find(Client.class, id);
+        entityManager.getTransaction().begin();
+        entityManager.remove(clientToRemove);
+        entityManager.getTransaction().commit();
+        //var deleted = clientToRemove;//testar e Remover var caso seja desnecessário
+        return Response.ok(clientToRemove).build();
     }
 
     //Deleta todos os Clientes
     @DELETE
     @Path("/delete/all")
-    @Produces({MediaType.APPLICATION_JSON})
-    public void deleteAllClients() {
-        lista.clear();
+    public Response deleteAllClients() {
+        entityManager.getTransaction().begin();
+        int deletedCount = entityManager.createQuery("DELETE FROM Client").executeUpdate();
+        entityManager.getTransaction().commit();
+        //lista.clear();
+
+        return Response.ok(deletedCount + " Registros deletados").build();
     }
 }
