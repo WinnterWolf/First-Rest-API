@@ -1,6 +1,8 @@
 package com.acme.app.main.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
 
 @Entity
 public class Client {

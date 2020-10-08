@@ -1,12 +1,13 @@
 package com.acme.app.main.rest;
 
 import com.acme.app.main.models.Client;
-//import com.acme.app.main.resources.Auxiliar;
+
 
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Path("/rest")
 public class RestResource {
 
+    @PersistenceContext
     EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Teste");
     EntityManager entityManager = entityManagerFactory.createEntityManager();
 
@@ -32,6 +34,7 @@ public class RestResource {
         entityManager.persist(client);
         lista.put(client.getId(), client);
         entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
 
@@ -39,18 +42,21 @@ public class RestResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response allClients() {
+
         String jpqlList = "select a from Client a";
-        List<Client> clienteJPQLList = entityManager
+        List<Client> clients = entityManager
                 .createQuery(jpqlList, Client.class)
                 .getResultList();
-       // Map<Integer, Object> clientes = lista; Método antigo
-        return Response.ok(clienteJPQLList).build();
+
+        entityManager.close();
+        return Response.ok(clients).build();
     }
 
     //Cria 3 Clientes para exemplo
     @POST
     @Path("exemplo")
     public void createExampleClients() {
+
         String[] nomes = {"João", "Maria", "Jorge"};
         int[] idades = {32, 23, 54};
         for(int i = 0;i<nomes.length;i++){
@@ -59,6 +65,8 @@ public class RestResource {
             entityManager.persist(client);
             lista.put(client.getId(), client);
             entityManager.getTransaction().commit();
+
+            entityManager.close();
         }
     }
 
@@ -68,14 +76,15 @@ public class RestResource {
     @Path("{id}")
     public Response getClientByKey(@PathParam("id") int id){
         String jpql = "select a from Client a where a.id = :id";
-        Client alunoJPQL = entityManager
+        Client client = entityManager
                 .createQuery(jpql, Client.class)
                 .setParameter("id", id)
                 .getSingleResult();
 
-        //var resultado = alunoJPQL;
-
-        return Response.ok(alunoJPQL).build();
+        entityManager.close();
+        return client != null
+                ? Response.ok(client).build()
+                : Response.status(Response.Status.NOT_FOUND).build();
     }
 
     //Altera um cliente existente através da key fornecida na URI
@@ -88,7 +97,8 @@ public class RestResource {
         clientEntityManager.setNome(client.getNome());
         clientEntityManager.setIdade(client.getIdade());
         entityManager.getTransaction().commit();
-        //lista.replace(key, client);
+
+        entityManager.close();
     }
 
     //Deleta um cliente pela id fornecida na URI e retorna o Cliente deletado
@@ -100,8 +110,11 @@ public class RestResource {
         entityManager.getTransaction().begin();
         entityManager.remove(clientToRemove);
         entityManager.getTransaction().commit();
-        //var deleted = clientToRemove;//testar e Remover var caso seja desnecessário
-        return Response.ok(clientToRemove).build();
+
+        entityManager.close();
+        return clientToRemove != null
+                ? Response.ok(clientToRemove).build()
+                : Response.status(Response.Status.NOT_FOUND).build();
     }
 
     //Deleta todos os Clientes
@@ -111,7 +124,8 @@ public class RestResource {
         entityManager.getTransaction().begin();
         int deletedCount = entityManager.createQuery("DELETE FROM Client").executeUpdate();
         entityManager.getTransaction().commit();
-        //lista.clear();
+
+        entityManager.close();
 
         return Response.ok(deletedCount + " Registros deletados").build();
     }
