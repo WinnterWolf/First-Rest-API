@@ -5,8 +5,6 @@ import com.acme.app.main.models.Client;
 
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,8 +18,9 @@ import java.util.Map;
 public class RestResource {
 
     @PersistenceContext
-    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Teste");
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    private EntityManager entityManager;
+//    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Teste");
+//    EntityManager entityManager = entityManagerFactory.createEntityManager();
 
     static Map<Integer, Object> lista = new HashMap<>();
 
