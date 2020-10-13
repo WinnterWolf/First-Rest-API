@@ -11,6 +11,11 @@ import java.io.*;
 @WebServlet("/servlet")
 public class SimpleServlet extends HttpServlet {
 
+    @GET
+    public String getTest(){
+        return "API test!";
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -19,8 +24,5 @@ public class SimpleServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().println("Simple servlet");
     }
-    @GET
-    public String getTest(){
-        return "API test!";
-    }
+
 }
