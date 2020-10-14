@@ -30,7 +30,7 @@ public class EnviromentVar {
         persistenceMap.put("javax.persistence.jdbc.password", password);
         persistenceMap.put("javax.persistence.jdbc.driver", "org.postgresql.Driver");
 
-        managerFactory = Persistence.createEntityManagerFactory("<current persistence unit>", persistenceMap);
+        managerFactory = Persistence.createEntityManagerFactory("teste", persistenceMap);
         EntityManager manager = managerFactory.createEntityManager();
 
         return manager;
