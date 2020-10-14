@@ -1,7 +1,7 @@
 package com.acme.app.main.rest;
 
 import com.acme.app.main.models.Client;
-
+import com.acme.app.main.resources.EnviromentVar;
 
 
 import javax.persistence.EntityManager;
@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,19 @@ import java.util.Map;
 public class RestResource {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
+
+    {
+        try {
+            entityManager = EnviromentVar.getConnection();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
 //    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Teste");
 //    EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 
     static Map<Integer, Object> lista = new HashMap<>();
 
