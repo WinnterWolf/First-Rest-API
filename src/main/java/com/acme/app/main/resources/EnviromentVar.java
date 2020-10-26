@@ -35,5 +35,5 @@ public class EnviromentVar {
 
         return manager;
     }
-    EntityManager heroku = getConnection();
+//    EntityManager heroku = getConnection();
 }
