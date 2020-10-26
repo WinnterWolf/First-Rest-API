@@ -1,1 +1,1 @@
-web: java -cp target/classes/:target/dependency/* com.kumuluz.ee.EeApplication
+com.kumuluz.ee.EeApplication
