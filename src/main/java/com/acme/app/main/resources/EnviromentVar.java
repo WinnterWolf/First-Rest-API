@@ -20,17 +20,13 @@ public class EnviromentVar {
 
 
     public static EntityManager getConnection() throws URISyntaxException {
-//        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
-        String dbUri = new String(System.getenv("DATABASE_URL"));
-        String username = dbUri.split(":")[1];
-        username = username.substring(2);
+        String username = dbUri.getUserInfo().split(":")[0];
         System.out.println(username);
-        String password = dbUri.split(":")[2];
-        password = password.substring(0, password.indexOf("@"));
-        System.out.println("password "+password);
-        String dbHost = dbUri.split("@")[1];
-        String dbUrl = "jdbc:postgresql://" + dbHost + "?sslmode=require";
+        String password = dbUri.getUserInfo().split(":")[1];
+        System.out.println(password);
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
 
         EntityManagerFactory managerFactory = null;
         Map<String, String> persistenceMap = new HashMap<String, String>();
