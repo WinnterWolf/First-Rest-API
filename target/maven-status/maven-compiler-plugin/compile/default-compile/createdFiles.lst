@@ -1,5 +1,6 @@
 com/acme/app/main/models/Client.class
 com/acme/app/main/rest/RestApplication.class
+com/acme/app/main/resources/EnviromentVar.class
 com/acme/app/main/resources/Auxiliar.class
 com/acme/app/main/rest/RestResource.class
 com/acme/app/main/SimpleServlet.class
