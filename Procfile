@@ -1,1 +1,1 @@
-com.kumuluz.ee.EeApplication
+web: com.kumuluz.ee.EeApplication
