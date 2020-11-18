@@ -4,6 +4,7 @@ import com.acme.app.main.models.Client;
 import com.acme.app.main.resources.EnviromentVar;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -16,9 +17,7 @@ import java.util.Map;
 @Path("/rest")
 public class RestResource {
 
-//    @PersistenceContext(unitName = "Heroku")
     EntityManager entityManager = null;
-
     {
         try {
             entityManager = EnviromentVar.getConnection();
@@ -32,17 +31,19 @@ public class RestResource {
     @POST
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response addClient(Client client) throws PersistenceException{
+    public Response addClient(@Valid Client client) throws PersistenceException{
 
         if(client != null){
             try {
+                entityManager.getTransaction().begin();
                 entityManager.persist(client);
+                entityManager.getTransaction().commit();
             } catch (PersistenceException e){
                 String message = "There was an error with your request. Try again with the right fields. nome and idade.";
                 return Response.status(Response.Status.NOT_ACCEPTABLE).entity(message).build();
             }
         }
-        return Response.accepted(client).build();
+        return Response.ok().build();
     }
 
 
@@ -55,8 +56,6 @@ public class RestResource {
         List<Client> clients = entityManager
                 .createQuery(jpqlList, Client.class)
                 .getResultList();
-
-
         return Response.ok(clients).build();
     }
 
@@ -68,8 +67,11 @@ public class RestResource {
         String[] nomes = {"João", "Maria", "Jorge"};
         int[] idades = {32, 23, 54};
         for(int i = 0;i<nomes.length;i++){
+
+            entityManager.getTransaction().begin();
             Client client = new Client(nomes[i], idades[i]);
             entityManager.persist(client);
+            entityManager.getTransaction().commit();
 
         }
         return Response.noContent().build();
@@ -79,47 +81,57 @@ public class RestResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("{id}")
-    public Response getClientByKey(@PathParam("id") int id){
+    public Response getClientByKey(@PathParam("id") int id) throws NoResultException{
+
         String query = "select a from Client a where a.id = :id";
-        Client client = entityManager
-                .createQuery(query, Client.class)
-                .setParameter("id", id)
-                .getSingleResult();
-
-
-        return client != null
-                ? Response.ok(client).build()
-                : Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Client client = entityManager
+                    .createQuery(query, Client.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return Response.ok(client).build();
+        } catch (NoResultException e){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     //Altera um cliente existente através da key fornecida na URI
     @PUT
     @Path("change/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public void addClient(@PathParam("id") int id, Client client){
-        Client clientEntityManager = entityManager.find(Client.class, id);
-        entityManager.getTransaction().begin();
-        clientEntityManager.setNome(client.getNome());
-        clientEntityManager.setIdade(client.getIdade());
-        entityManager.getTransaction().commit();
+    public Response addClient(@PathParam("id") int id, @Valid Client client) throws NullPointerException{
 
-
+        try {
+            Client clientEntityManager = entityManager.find(Client.class, id);
+            entityManager.getTransaction().begin();
+            clientEntityManager.setNome(client.getNome());
+            clientEntityManager.setIdade(client.getIdade());
+            entityManager.getTransaction().commit();
+            return Response.ok().build();
+        } catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     //Deleta um cliente pela id fornecida na URI e retorna o Cliente deletado
     @DELETE
     @Path("/delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response deleteClientByKey(@PathParam("id") int id) {
-        Client clientToRemove = entityManager.find(Client.class, id);
-        entityManager.getTransaction().begin();
-        entityManager.remove(clientToRemove);
-        entityManager.getTransaction().commit();
+    public Response deleteClientById(@PathParam("id") int id) throws IllegalArgumentException {
+
+        try {
+            Client clientToRemove = entityManager.find(Client.class, id);
+            entityManager.getTransaction().begin();
+            entityManager.remove(clientToRemove);
+            entityManager.getTransaction().commit();
+
+            return Response.ok(clientToRemove).build();
 
 
-        return clientToRemove != null
-                ? Response.ok(clientToRemove).build()
-                : Response.status(Response.Status.NOT_FOUND).build();
+        } catch (IllegalArgumentException e){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
     }
 
     //Deleta todos os Clientes

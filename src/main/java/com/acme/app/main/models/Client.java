@@ -1,6 +1,9 @@
 package com.acme.app.main.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
@@ -12,13 +15,15 @@ public class Client {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
+    @NotNull
     @Column(nullable = false)
     private String nome;
 
+    @NotNull
     @Column(nullable = false)
-    private int idade;
+    private Integer idade;
 
-    public Client(String nome, int idade) {
+    public Client(String nome, Integer idade) {
         this.nome = nome;
         this.idade = idade;
     }
@@ -30,7 +35,7 @@ public class Client {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(Integer idade) {
         this.idade = idade;
     }
 

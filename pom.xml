@@ -56,6 +56,10 @@
       <artifactId>kumuluzee-jpa-hibernate</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.kumuluz.ee</groupId>
+      <artifactId>kumuluzee-bean-validation-hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.21</version>
@@ -82,7 +86,7 @@
           <execution>
             <id>package</id>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>repackage</goal>
             </goals>
           </execution>
         </executions>
