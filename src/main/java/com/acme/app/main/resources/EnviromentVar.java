@@ -46,10 +46,9 @@ public class EnviromentVar {
             return manager;
         } else {
             EntityManagerFactory managerFactory;
-            managerFactory = Persistence.createEntityManagerFactory("Local");
+            managerFactory = Persistence.createEntityManagerFactory("localPG");
             EntityManager manager = managerFactory.createEntityManager();
             return manager;
         }
     }
-//    EntityManager heroku = getConnection();
 }
