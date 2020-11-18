@@ -32,12 +32,17 @@ public class RestResource {
     @POST
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response addClient(Client client){
+    public Response addClient(Client client) throws PersistenceException{
 
         if(client != null){
-            entityManager.persist(client);
+            try {
+                entityManager.persist(client);
+            } catch (PersistenceException e){
+                String message = "There was an error with your request. Try again with the right fields. nome and idade.";
+                return Response.status(Response.Status.NOT_ACCEPTABLE).entity(message).build();
+            }
         }
-        return Response.noContent().build();
+        return Response.accepted(client).build();
     }
 
 

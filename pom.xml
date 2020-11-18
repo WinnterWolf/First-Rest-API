@@ -57,10 +57,6 @@
     </dependency>
     <dependency>
       <groupId>com.kumuluz.ee</groupId>
-      <artifactId>kumuluzee-jpa-eclipselink</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.kumuluz.ee</groupId>
       <artifactId>kumuluzee-cdi-weld</artifactId>
     </dependency>
     <dependency>
