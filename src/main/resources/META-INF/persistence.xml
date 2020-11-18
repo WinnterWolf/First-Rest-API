@@ -7,7 +7,7 @@
 
 
     <!-- Unidade de persistencia da parte 2 do curso (Com implementacao Hibernate ou EclipseLink) -->
-    <persistence-unit name="Teste">
+    <persistence-unit name="Local">
 
         <!-- Implementacao do JPA -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>

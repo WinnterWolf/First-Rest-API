@@ -3,11 +3,7 @@ package com.acme.app.main.rest;
 import com.acme.app.main.models.Client;
 import com.acme.app.main.resources.EnviromentVar;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,7 +39,7 @@ public class RestResource {
         entityManager.persist(client);
         lista.put(client.getId(), client);
         entityManager.getTransaction().commit();
-//        entityManager.close();
+
     }
 
 
@@ -57,7 +53,7 @@ public class RestResource {
                 .createQuery(jpqlList, Client.class)
                 .getResultList();
 
-//        entityManager.close();
+
         return Response.ok(clients).build();
     }
 
@@ -75,7 +71,7 @@ public class RestResource {
             lista.put(client.getId(), client);
             entityManager.getTransaction().commit();
 
-//            entityManager.close();
+
         }
     }
 
@@ -90,7 +86,7 @@ public class RestResource {
                 .setParameter("id", id)
                 .getSingleResult();
 
-//        entityManager.close();
+
         return client != null
                 ? Response.ok(client).build()
                 : Response.status(Response.Status.NOT_FOUND).build();
@@ -107,7 +103,7 @@ public class RestResource {
         clientEntityManager.setIdade(client.getIdade());
         entityManager.getTransaction().commit();
 
-//        entityManager.close();
+
     }
 
     //Deleta um cliente pela id fornecida na URI e retorna o Cliente deletado
@@ -120,7 +116,7 @@ public class RestResource {
         entityManager.remove(clientToRemove);
         entityManager.getTransaction().commit();
 
-//        entityManager.close();
+
         return clientToRemove != null
                 ? Response.ok(clientToRemove).build()
                 : Response.status(Response.Status.NOT_FOUND).build();
@@ -134,7 +130,7 @@ public class RestResource {
         int deletedCount = entityManager.createQuery("DELETE FROM Client").executeUpdate();
         entityManager.getTransaction().commit();
 
-//        entityManager.close();
+
 
         return Response.ok(deletedCount + " Registros deletados").build();
     }
