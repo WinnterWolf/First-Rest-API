@@ -22,10 +22,10 @@
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost/teste" />
             <property name="hibernate.connection.username" value="root" />
             <property name="hibernate.connection.password" value="password" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 
             <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="update" /> <!-- Possible values for hibernate.hbm2ddl.auto are: validate, update, create, create-drop -->
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" /> <!-- Possible values for hibernate.hbm2ddl.auto are: validate, update, create, create-drop -->
         </properties>
 
     </persistence-unit>
