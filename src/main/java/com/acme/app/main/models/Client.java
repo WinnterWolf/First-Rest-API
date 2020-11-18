@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 
 @Entity
+@Table(name = "client")
 public class Client {
 
     @Id

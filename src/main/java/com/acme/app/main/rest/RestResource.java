@@ -27,19 +27,17 @@ public class RestResource {
         }
     }
 
-    static Map<Integer, Object> lista = new HashMap<>();
 
     //Adiciona um novo Cliente através de Json
     @POST
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
-    public void addClient(Client client){
+    public Response addClient(Client client){
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(client);
-        lista.put(client.getId(), client);
-        entityManager.getTransaction().commit();
-
+        if(client != null){
+            entityManager.persist(client);
+        }
+        return Response.noContent().build();
     }
 
 
@@ -60,19 +58,16 @@ public class RestResource {
     //Cria 3 Clientes para exemplo
     @POST
     @Path("exemplo")
-    public void createExampleClients() {
+    public Response createExampleClients() {
 
         String[] nomes = {"João", "Maria", "Jorge"};
         int[] idades = {32, 23, 54};
         for(int i = 0;i<nomes.length;i++){
-            entityManager.getTransaction().begin();
             Client client = new Client(nomes[i], idades[i]);
             entityManager.persist(client);
-            lista.put(client.getId(), client);
-            entityManager.getTransaction().commit();
-
 
         }
+        return Response.noContent().build();
     }
 
     //Busca e Retorna um cliente através da Key fornecida na URI
@@ -80,9 +75,9 @@ public class RestResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("{id}")
     public Response getClientByKey(@PathParam("id") int id){
-        String jpql = "select a from Client a where a.id = :id";
+        String query = "select a from Client a where a.id = :id";
         Client client = entityManager
-                .createQuery(jpql, Client.class)
+                .createQuery(query, Client.class)
                 .setParameter("id", id)
                 .getSingleResult();
 
